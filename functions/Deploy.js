@@ -1,4 +1,9 @@
-import './components/compile';
+/**
+ * Deploy node function
+ * @desc Build files and deploys to server
+ */
+
+ import './components/compile';
 
 import {
   makeDir, compile, deploy,
