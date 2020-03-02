@@ -36,6 +36,7 @@ const minifyLiquid = (file) => {
     minifyJS: true,
     removeComments: true,
     removeRedundantAttributes: true,
+    ignoreCustomFragments: [/{%(.*?)%}/g]
   });
   return output;
 };
