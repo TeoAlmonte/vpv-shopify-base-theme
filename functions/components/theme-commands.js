@@ -1,3 +1,8 @@
+/**
+ * Theme commands
+ * @desc List of commands used to build, compile, watch, and deploy. Executes webpack
+ */
+
 import chalk from 'chalk';
 import { ensureDir } from 'fs-extra';
 
@@ -16,26 +21,77 @@ const PATHS = {
   output: path.resolve(__dirname, '../../dist'),
 };
 
+
+/**
+ * Compile command via Webpack
+ * @desc Compiles with production environment for webpack
+ * @func Checks for errors or warnings before building.
+ * @returns Pass or Fail. On pass - build files are generated.
+ */
 export const compile = async () => {
   await new Promise((resolve, reject) => {
-    prodCompiler.run((err) => {
+    prodCompiler.run((err, stats) => {
       if (err) {
+        console.error(err.stack || err);
+        if (err.details) {
+          console.error(err.details);
+        }
         reject(err);
+        return;
       }
+      if (stats.hasErrors()) {
+        log(stats.toJson().errors);
+        log(chalk.bgHex('#fdcb6e').black('[WARNING: BUILD FAILED]'));
+        reject(err);
+        return;
+      }
+
+      if (stats.hasWarnings()) {
+        log(stats.toJson().warnings);
+        log(chalk.bgHex('#fdcb6e').black('[WARNING: BUILD FAILED]'));
+        reject(err);
+        return;
+      }
+
       resolve('done');
+      log(chalk.bgHex('#00b894').white('[Build successful]'));
+      return
     });
   });
-  return log(chalk.bgHex('#00b894').white('[Build successful]'));
 };
 
+/**
+ * Watch command via Webpack
+ * @desc Watches with development environment for webpack
+ * Aggregate timeout, waits for multiple saves before rebuild (set to 1000ms)
+ * @func Checks for errors or warnings before building.
+ * @returns Pass or Fail. On pass - build files are generated.
+ */
 export const watchCompile = () => {
   devCompiler.watch({
     aggregateTimeout: 1000,
   }, (err, stats) => {
     if (err) {
+      console.error(err.stack || err);
+      if (err.details) {
+        console.error(err.details);
+      }
       return err;
     }
-    console.log(stats.toString({
+
+    if (stats.hasErrors()) {
+      log(stats.toJson().errors);
+      log(chalk.bgHex('#fdcb6e').black('[WARNING: BUILD FAILED]'));
+      return;
+    }
+
+    if (stats.hasWarnings()) {
+      log(stats.toJson().warnings);
+      log(chalk.bgHex('#fdcb6e').black('[WARNING: BUILD FAILED]'));
+      return;
+    }
+
+    log(stats.toString({
       chunks: false,
       cached: false,
       children: false,
@@ -47,11 +103,20 @@ export const watchCompile = () => {
   });
 };
 
-// If no dist folder is found create one
+/**
+ * Ensure dist exists command
+ * @desc If no dist folder is found create one
+ */
 export const makeDir = () => {
   ensureDir(PATHS.output);
 };
 
+/**
+ * Watch command via Themekit
+ * @desc Establish connection with Shopify store via Watch
+ * @func Checks for errors or warnings before building.
+ * @returns Pass or Fail. On pass - build files are generated.
+ */
 export const watch = () => {
   themeKit
     .command('watch', {
@@ -63,6 +128,10 @@ export const watch = () => {
     });
 };
 
+/**
+ * Open command via Themekit
+ * @desc Open Shopify Store
+ */
 export const open = () => {
   themeKit
     .command('open', {
@@ -73,10 +142,14 @@ export const open = () => {
     });
 };
 
+/**
+ * Download command via Themekit
+ * @desc Downloads Shopify store into SRC directory
+ */
 export const download = () => {
   themeKit
     .command('download', {
-      env: 'production',
+      env: 'theme',
       dir: `${PATHS.src}`,
     })
     .catch((err) => {
@@ -84,6 +157,10 @@ export const download = () => {
     });
 };
 
+/**
+ * Deploy command via Themekit
+ * @desc Deploys to Shopify Store then opens store
+ */
 export const deploy = () => {
   log(chalk.bgHex('#563ce7').white('[Starting deployment process...]'));
   log(chalk.bgHex('#fdcb6e').black('[WARNING: STOPPING THE DEPLOYMENT PROCESS CAN RESULT IN FILE LOSS]'));
