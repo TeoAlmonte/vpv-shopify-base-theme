@@ -118,3 +118,11 @@ You can also deploy to another theme. Just name whichever theme you would like t
 - Updates all changed files on the "production" theme
 
 You can also update another theme. Same as above, just name whichever theme you would like to update, "production". To avoid conflict, make sure all theme's are unique. You can only have 1 theme named "production" at a time.
+
+
+### Themekit Error logging
+
+`node_modules/@shopify/themekit/lib/run-executable.js`
+
+add on line 31
+`childProcess.stderr.pipe(process.stderr);`
