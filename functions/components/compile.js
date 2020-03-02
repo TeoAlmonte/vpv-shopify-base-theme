@@ -27,7 +27,9 @@ removeSync(path.resolve(__dirname, '../../dist'));
 */
 log(chalk.bgHex('#563ce7').white('[Rebuilding distribution..]'));
 
-// Minify liquid
+/**
+  @desc Minify liquid with html-minifier
+*/
 const minifyLiquid = (file) => {
   const content = readFileSync(file, 'utf8');
   const output = minify(content, {
