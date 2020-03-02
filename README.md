@@ -12,16 +12,7 @@ or if you dont have SSH setup with github:
 
 Next, run `npm install` to install required dependencies.
 
-Rename the `config-example.yml` to `config.yml` and edit to include to use your correct password and theme id's. Your production definition block **must** be called "production" for the `deploy` command to work properly. For the theme commands to work properly, make sure you have a yamel entry named "development" and one named "production". Detailed instructions on setting up `config.yml` can be found [here.](https://shopify.github.io/themekit/configuration)
-
-Finally, update the `proxy` value in the `bs-config-example.js` file to correctly proxy your live Shopify domain to your local BrowserSync server during development and rename it `bs-config.js`.
-
-```
-module.exports = {
-  "files": "theme.update",
-  "proxy": "https://mynewstore.myshopify.com?preview_theme_id=THEME_ID"
-};
-```
+Rename the `config-example.yml` to `config.yml` and edit to include to use your correct password and theme id's. The `config.yml` only accepts one active theme at a time. The theme definition must be called "theme" for any commands to work properly. Detailed instructions on setting up `config.yml` can be found [here.](https://shopify.github.io/themekit/configuration)
 
 ## Structure
 
@@ -100,11 +91,9 @@ All assets are bundled for production with minification, no source maps, and les
 ### watch
 - Runs the build command for development
     - No minification
-    - Source maps are included
     - Expanded bundle information logged in the terminal
 - Starts watching your project for changes
-- Opens a browser window running a local BrowserSync server proxied to your store
-- Uploads any changes to your store on the "development" theme and automatically refreshes the browser
+- Opens a browser window running your store with the corresponding theme ID
 
 ### deploy
 - Runs the build command
