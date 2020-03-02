@@ -1,3 +1,7 @@
+/**
+ * Watch function for non-webpack processed files
+ * @desc Files not processed by webpack will be piped with Chokidar
+ */
 
 import { copy } from 'fs-extra';
 import fs from 'fs';
@@ -21,6 +25,10 @@ const fetchSubDirectories = (callback) => {
   glob(`${PATHS.src}/!(assets)*/!(customers)*/*.liquid`, callback);
 };
 
+/**
+ * Copy files
+ * @desc Copy files to dist folder and flattens subfolders
+ */
 const copyFile = (output, filePath) => {
   fetchSubDirectories((err, res) => {
     const file = res.filter((files) => files.includes(filePath));
@@ -35,6 +43,10 @@ const copyFile = (output, filePath) => {
   });
 };
 
+/**
+ * Delete files
+ * @desc Delete files from dist folder
+ */
 const unlinkFile = (output) => {
   try {
     if (output.includes('assets/images' || 'assets/fonts')) {
@@ -48,6 +60,10 @@ const unlinkFile = (output) => {
   }
 };
 
+/**
+ * Ignored files
+ * @desc Ignored files which are processed by webpack.
+ */
 let ignorePaths;
 const ignoreAssets = async () => {
   await new Promise((resolve, reject) => {
@@ -64,6 +80,11 @@ const ignoreAssets = async () => {
   });
 };
 
+/**
+ * Watch files with Chokidar
+ * @desc Chokidar watches on add, change and delete. Ignore paths passed in.
+ * https://github.com/paulmillr/chokidar
+ */
 const watcher = async () => {
   await new Promise((resolve, reject) => {
     const watch = chokidar.watch(`${PATHS.src}`, {
