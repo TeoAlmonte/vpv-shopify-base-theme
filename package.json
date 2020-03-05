@@ -81,7 +81,7 @@
 				"error",
 				"tab"
 			],
-			"allowIndentationTabs": true,
+			"allowIndentationTabs": 0,
 			"no-tabs": 0
 		}
 	},
